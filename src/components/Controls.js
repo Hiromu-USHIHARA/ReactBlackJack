@@ -1,8 +1,14 @@
+import { Button, Group } from "@mantine/core"
+
 export default function Controls({onHit, onStand, disabled}){
     return (
-        <div style={{marginTop: "20px"}}>
-            <button onClick={onHit} disabled={disabled}>Hit</button>
-            <button onClick={onStand} disabled={disabled} style={{marginLeft: "10px"}}>Stand</button>
-        </div>
+        <Group mt="md">
+            <Button onClick={onHit} disabled={disabled} color="blue" size="md" radius="md">
+                Hit
+            </Button>
+            <Button onClick={onStand} disabled={disabled} color="red" size="md" radius="md">
+                Stand
+            </Button>
+        </Group>
     );
 }

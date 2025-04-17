@@ -3,7 +3,7 @@ import { createDeck } from "./utils/deck";
 import Hand from "./components/Hand.js"
 import Controls from "./components/Controls.js";
 import { calculateScore } from "./utils/calculateScore.js";
-
+import { Container, Title, Stack, Button, Alert, Text } from "@mantine/core";
 
 function App(){
   const [deck, setDeck]=useState([]);
@@ -77,24 +77,34 @@ function App(){
   const dealerScore=calculateScore(dealerHand);
 
   return (
-    <div style={{padding: "20px"}}>
-      <h1>Black Jack</h1>
-      <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} />
-      <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} />
-      <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
-      
-      {message && (
-        <div style={{ marginTop: '20px', fontWeight: 'bold' }}>
-          {message}
-        </div>
-      )}
-      
-      {gameOver && (
-        <button onClick={handleRestart} style={{marginTop: "20px"}}>
-          Play Again
-        </button>
-      )}
-    </div>
+    <Container size="sm" mt="md">
+      <Stack align="center" spacing="md">
+        <Title order={1}>Black Jack</Title>
+          <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} />
+          <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} />
+          <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
+          
+          {message && (
+            <Alert
+              // title="Result"
+              color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : "yellow"}
+              variant="light"
+              radius="md"
+              withCloseButton={false}
+            >
+              <Text size="lg" weight={600}>
+                {message}
+              </Text>
+            </Alert>
+          )}
+          
+          {gameOver && (
+            <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
+              Play Again
+            </Button>
+          )}
+      </Stack>
+    </Container>
   );
 }
 
