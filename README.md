@@ -6,5 +6,5 @@ Play here: https://react-black-jack-git-main-hiromu-ushiharas-projects.vercel.ap
 
 
 <p align="center">
-  <img src="ReactBlackJackVercelSnapshot.png" alt="Snapshot of Demo" width="400"/>
+  <img src="ReactBlackJackVercelSnapshot.png" alt="Snapshot of Demo" width="600"/>
 </p>
