@@ -2,6 +2,7 @@ import {Card as MantineCard, Text, Stack} from "@mantine/core"
 
 export default function Card({suit, value, colorScheme}){
     const textColor = colorScheme === "dark" ? "#111" : "#111";
+    const suitColor = suit === "♥" || suit === "♦" ? "red" : textColor;
     return (
         <MantineCard
             shadow="sm"
@@ -20,8 +21,8 @@ export default function Card({suit, value, colorScheme}){
             }}
         >
             <Stack spacing={0} align="center">
-                <Text size="lg" weight={700} style={{color: textColor}}>{value}</Text>
-                <Text size="md" style={{color: textColor}}>{suit}</Text>
+                <Text size="xl" weight={700} style={{color: suitColor, fontFamily: "serif"}}>{value}</Text>
+                <Text size="xl" style={{color: suitColor}}>{suit}</Text>
             </Stack>
         </MantineCard>
     );
