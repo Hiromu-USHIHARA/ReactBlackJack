@@ -82,7 +82,15 @@ function App(){
         <Title order={1}>Black Jack</Title>
           <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} />
           <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} />
-          <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
+          {!gameOver && (
+            <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
+          )}
+
+          {gameOver && (
+            <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
+              Play Again
+            </Button>
+          )}
           
           {message && (
             <Alert
@@ -96,12 +104,6 @@ function App(){
                 {message}
               </Text>
             </Alert>
-          )}
-          
-          {gameOver && (
-            <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
-              Play Again
-            </Button>
           )}
       </Stack>
     </Container>
