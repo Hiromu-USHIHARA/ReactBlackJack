@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { createDeck } from "./utils/deck";
 import Hand from "./components/Hand.js"
 import Controls from "./components/Controls.js";
+import ColorSchemeToggle from "./components/ColorSchemeToggle.js";
 import { calculateScore } from "./utils/calculateScore.js";
-import { Container, Title, Stack, Button, Alert, Text } from "@mantine/core";
+import { Container, Title, Stack, Button, Alert, Text, Group } from "@mantine/core";
 
 function App(){
   const [deck, setDeck]=useState([]);
@@ -79,7 +80,10 @@ function App(){
   return (
     <Container size="sm" mt="md">
       <Stack align="center" spacing="md">
-        <Title order={1}>Black Jack</Title>
+        <Group position="apart" align="center" px="md" pt="md">
+          <Title order={1}>Black Jack</Title>
+          <ColorSchemeToggle />
+        </Group>
           <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} />
           <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} />
           {!gameOver && (
