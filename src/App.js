@@ -4,7 +4,7 @@ import Hand from "./components/Hand.js"
 import Controls from "./components/Controls.js";
 import ColorSchemeToggle from "./components/ColorSchemeToggle.js";
 import { calculateScore } from "./utils/calculateScore.js";
-import { Container, Title, Stack, Button, Alert, Text, Group } from "@mantine/core";
+import { Container, Title, Stack, Button, Alert, Text, Group, useMantineColorScheme } from "@mantine/core";
 
 function App(){
   const [deck, setDeck]=useState([]);
@@ -12,6 +12,7 @@ function App(){
   const [dealerHand, setDealerHand]=useState([]);
   const [message, setMessage]=useState("");
   const [gameOver, setGameOver]=useState(false);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   useEffect(()=>{
     const newDeck=createDeck();
@@ -84,8 +85,8 @@ function App(){
           <Title order={1}>Black Jack</Title>
           <ColorSchemeToggle />
         </Group>
-          <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} />
-          <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} />
+          <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} colorScheme={colorScheme} />
+          <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} colorScheme={colorScheme} />
           {!gameOver && (
             <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
           )}

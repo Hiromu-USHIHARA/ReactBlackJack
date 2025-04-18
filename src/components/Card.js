@@ -1,6 +1,7 @@
 import {Card as MantineCard, Text, Stack} from "@mantine/core"
 
-export default function Card({suit, value}){
+export default function Card({suit, value, colorScheme}){
+    const textColor = colorScheme === "dark" ? "#111" : "#111";
     return (
         <MantineCard
             shadow="sm"
@@ -19,8 +20,8 @@ export default function Card({suit, value}){
             }}
         >
             <Stack spacing={0} align="center">
-                <Text size="lg" weight={700}>{value}</Text>
-                <Text size="md">{suit}</Text>
+                <Text size="lg" weight={700} style={{color: textColor}}>{value}</Text>
+                <Text size="md" style={{color: textColor}}>{suit}</Text>
             </Stack>
         </MantineCard>
     );
