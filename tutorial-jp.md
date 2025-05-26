@@ -403,3 +403,4 @@ npm start
 
 このゲームは[Vercelにデプロイ](https://react-black-jack-git-main-hiromu-ushiharas-projects.vercel.app/)されており，実際にプレイすることができます．
 
+> この記事の作成にあたっては，作成したコードをもとに生成AIが活用されています．
