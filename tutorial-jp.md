@@ -3,6 +3,8 @@
 このチュートリアルでは，[React](https://ja.react.dev/)を使用して[ブラックジャック](https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B8%E3%83%A3%E3%83%83%E3%82%AF)を実装していきます．
 UIにはモダンなライブラリである[Mantine](https://mantine.dev/)を利用します．
 
+この解説は[Zennでも公開](https://zenn.dev/hiromu_ushihara/articles/3e40ea5a34f2a7)されています．
+
 ## プロジェクトのセットアップ
 
 まずReactのプロジェクトを初期化します:
