@@ -379,7 +379,17 @@ export default App
 
 1. ゲーム開始時に，プレイヤーとディーラーに2枚ずつカードが配られます
 2. プレイヤーは「Hit」ボタンでカードを追加で引くことができます
-3. 「Stand」ボタンを押すと，ディーラーが17以上になるまでカードを引き続けます
-4. スコアが21を超えるとバースト（負け）となります
+3. スコアが21を超えるとバースト（負け）となります
+4. 「Stand」ボタンを押すと，ディーラーが17以上になるまでカードを引き続けます
 5. ディーラーとプレイヤーのスコアを比較して勝敗が決まります
 6. 「Play Again」ボタンで新しいゲームを開始できます
+
+
+## デプロイ済みのゲーム画面
+
+以下が完成したゲームの画面です．
+
+![ReactBlackJackVercelSnapshot](ReactBlackJackVercelSnapshot.png)
+
+このゲームは[Vercelにデプロイ](https://react-black-jack-git-main-hiromu-ushiharas-projects.vercel.app/)されており，実際にプレイすることができます．
+
