@@ -103,97 +103,115 @@ export const calculateScore = (hand) => {
 ### コンポーネントの実装
 
 #### Card.js
-カードを表示するコンポーネントです：
+カードを表示するコンポーネントです．
 
 ```javascript
-import { Paper, Text } from '@mantine/core';
+import {Card as MantineCard, Text, Stack} from "@mantine/core"
 
-function Card({ card, colorScheme }) {
-  const isRed = card.suit === '♥' || card.suit === '♦';
-  
-  return (
-    <Paper
-      p="xs"
-      radius="md"
-      style={{
-        width: '60px',
-        height: '90px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colorScheme === 'dark' ? '#2C2E33' : 'white',
-        border: '1px solid #ddd'
-      }}
-    >
-      <Text
-        size="xl"
-        weight={700}
-        color={isRed ? 'red' : 'black'}
-      >
-        {card.value}
-      </Text>
-      <Text
-        size="xl"
-        color={isRed ? 'red' : 'black'}
-      >
-        {card.suit}
-      </Text>
-    </Paper>
-  );
+export default function Card({suit, value, colorScheme}){
+    const textColor = colorScheme === "dark" ? "#111" : "#111";
+    const suitColor = suit === "♥" || suit === "♦" ? "red" : textColor;
+    return (
+        <MantineCard
+            shadow="sm"
+            padding="xs"
+            radius="md"
+            withBorder
+            style={{
+                width: 60,
+                height: 80,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "white",
+                textAlign: "center",
+                margin: "5px"
+            }}
+        >
+            <Stack spacing={0} align="center">
+                <Text size="xl" weight={700} style={{color: suitColor, fontFamily: "serif"}}>{value}</Text>
+                <Text size="xl" style={{color: suitColor}}>{suit}</Text>
+            </Stack>
+        </MantineCard>
+    );
 }
-
-export default Card;
 ```
 
 #### Hand.js
-プレイヤーやディーラーの手札を表示するコンポーネントです：
+`Card.js`で実装したカードを使って，プレイヤーとディーラーの手札を表示します．
 
 ```javascript
-import { Stack, Text } from '@mantine/core';
-import Card from './Card';
+import Card from "./Card"
+import { Group, Title} from "@mantine/core"
 
-function Hand({ cards, title, colorScheme }) {
-  return (
-    <Stack align="center" spacing="xs">
-      <Text weight={500}>{title}</Text>
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {cards.map((card, index) => (
-          <Card key={index} card={card} colorScheme={colorScheme} />
-        ))}
-      </div>
-    </Stack>
-  );
+export default function Hand({cards, title, colorScheme}){
+    return (
+        <div style={{marginBottom: "20px"}}>
+            <Title order={4} align="center">{title}</Title>
+            <Group spacing="xs" position="center" wrap="wrap">
+                {cards.map((card, index) => (
+                    <Card key={index} suit={card.suit} value={card.value} colorScheme={colorScheme} />
+                ))}
+            </Group>
+        </div>
+    );
 }
-
-export default Hand;
 ```
 
 #### Controls.js
-ゲームの操作ボタンを表示するコンポーネントです：
+ゲームを操作するボタンを実装します．
+プレイヤーが行う操作はヒット（カードを引く），スタンド（勝負する）の２つです．
 
 ```javascript
-import { Group, Button } from '@mantine/core';
+import { Button, Group } from "@mantine/core"
 
-function Controls({ onHit, onStand, disabled }) {
-  return (
-    <Group position="center" spacing="md">
-      <Button onClick={onHit} disabled={disabled}>
-        Hit
-      </Button>
-      <Button onClick={onStand} disabled={disabled}>
-        Stand
-      </Button>
-    </Group>
-  );
+export default function Controls({onHit, onStand, disabled}){
+    return (
+        <Group mt="md">
+            <Button onClick={onHit} disabled={disabled} color="blue" size="md" radius="md">
+                Hit
+            </Button>
+            <Button onClick={onStand} disabled={disabled} color="red" size="md" radius="md">
+                Stand
+            </Button>
+        </Group>
+    );
 }
+```
 
-export default Controls;
+#### ColorSchemeToggle.js
+
+この機能はオプショナルですが，ライトモード/ダークモード切り換え機能を実装しています．
+
+```javascript
+import { ActionIcon, useMantineColorScheme, Tooltip } from "@mantine/core";
+import { IconSun, IconMoonStars } from "@tabler/icons-react";
+
+export default function ColorSchemeToggle(){
+    const {colorScheme, toggleColorScheme}=useMantineColorScheme();
+    const dark = colorScheme==="dark";
+
+    return (
+        <Tooltip label="Toggle color scheme" withArrow position="left">
+            <ActionIcon
+                variant="outline"
+                color={dark ? "yellow" : "blue"}
+                onClick={()=>toggleColorScheme()}
+                title="Toggle color scheme"
+                size="lg"
+                radius="md"
+            >
+                {dark ? <IconSun size="1rem" /> : <IconMoonStars size="1rem" />}
+            </ActionIcon>
+        </Tooltip>
+    );
+}
 ```
 
 ### メインゲームロジックの実装
 
-`App.js`でメインのゲームロジックを実装します．主な機能は：
+`App.js`でメインのゲームロジックを実装します．
+主な機能は以下のとおりです．
 
 1. ゲームの状態管理（デッキ，プレイヤーの手札，ディーラーの手札）
 2. ヒット（カードを引く）機能
@@ -212,85 +230,77 @@ import ColorSchemeToggle from "./components/ColorSchemeToggle.js";
 import { calculateScore } from "./utils/calculateScore.js";
 import { Container, Title, Stack, Button, Alert, Text, Group, useMantineColorScheme } from "@mantine/core";
 
-function App() {
-  // ゲームの状態管理
-  const [deck, setDeck] = useState([]);
-  const [playerHand, setPlayerHand] = useState([]);
-  const [dealerHand, setDealerHand] = useState([]);
-  const [message, setMessage] = useState("");
-  const [gameOver, setGameOver] = useState(false);
+function App(){
+  const [deck, setDeck]=useState([]);
+  const [playerHand, setPlayerHand]=useState([]);
+  const [dealerHand, setDealerHand]=useState([]);
+  const [message, setMessage]=useState("");
+  const [gameOver, setGameOver]=useState(false);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  // ゲーム開始時の初期化
-  useEffect(() => {
-    const newDeck = createDeck();
+  useEffect(()=>{
+    const newDeck=createDeck();
     setPlayerHand([newDeck[0], newDeck[2]]);
     setDealerHand([newDeck[1], newDeck[3]]);
     setDeck(newDeck.slice(4));
-  }, []);
+  }, [])
 
-  // ヒット（カードを引く）機能
-  const handleHit = () => {
+  const handleHit=()=>{
     if (deck.length === 0) return;
 
-    const card = deck[0];
-    const newHand = [...playerHand, card];
-    const newDeck = deck.slice(1);
-    const newScore = calculateScore(newHand);
+    const card=deck[0];
+    const newHand=[...playerHand, card];
+    const newDeck=deck.slice(1);
+    const newScore=calculateScore(newHand);
 
     setPlayerHand(newHand);
     setDeck(newDeck);
     
-    if (newScore > 21) {
+    if (newScore>21){
       setMessage("Bursted... You Lose...");
       setGameOver(true);
     }
-  };
+  }
 
-  // スタンド（カードを引くのをやめる）機能
-  const handleStand = () => {
-    let newDeck = [...deck];
-    let newDealerHand = [...dealerHand];
+  const handleStand=()=>{
+    let newDeck=[...deck];
+    let newDealerHand=[...dealerHand];
 
-    // ディーラーが17以上になるまでカードを引く
-    while (calculateScore(newDealerHand) < 17) {
-      const card = newDeck.shift();
+    while (calculateScore(newDealerHand)<17){
+      const card=newDeck.shift();
       newDealerHand.push(card);
     }
     
     setDealerHand(newDealerHand);
     setDeck(newDeck);
 
-    // 勝敗判定
-    const playerScore = calculateScore(playerHand);
-    const dealerScore = calculateScore(newDealerHand);
+    const playerScore=calculateScore(playerHand);
+    const dealerScore=calculateScore(newDealerHand);
     
-    if (dealerScore > 21) {
+    if (dealerScore>21){
       setMessage("Dealer Bursted! You Win!");
-    } else if (playerScore > dealerScore) {
+    } else if (playerScore>dealerScore){
       setMessage("You Win!");
-    } else if (playerScore < dealerScore) {
-      setMessage("You Lose...");
+    } else if (playerScore<dealerScore){
+      setMessage("You Lose...")
     } else {
-      setMessage("Draw!");
+      setMessage("Draw!")
     }
 
-    setGameOver(true);
-  };
+    setGameOver(true)
+  }
 
-  // ゲームのリスタート機能
-  const handleRestart = () => {
-    const newDeck = createDeck();
+  const handleRestart=()=>{
+    const newDeck=createDeck();
     setPlayerHand([newDeck[0], newDeck[2]]);
     setDealerHand([newDeck[1], newDeck[3]]);
     setDeck(newDeck.slice(4));
     setMessage("");
     setGameOver(false);
-  };
+  }
 
-  // 現在のスコアを計算
-  const playerScore = calculateScore(playerHand);
-  const dealerScore = calculateScore(dealerHand);
+  const playerScore=calculateScore(playerHand);
+  const dealerScore=calculateScore(dealerHand);
 
   return (
     <Container size="sm" mt="md">
@@ -299,40 +309,37 @@ function App() {
           <Title order={1}>Black Jack</Title>
           <ColorSchemeToggle />
         </Group>
-        <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} colorScheme={colorScheme} />
-        <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} colorScheme={colorScheme} />
-        
-        {/* ゲーム中の操作ボタン */}
-        {!gameOver && (
-          <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
-        )}
+          <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} colorScheme={colorScheme} />
+          <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} colorScheme={colorScheme} />
+          {!gameOver && (
+            <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
+          )}
 
-        {/* ゲーム終了時のリスタートボタン */}
-        {gameOver && (
-          <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
-            Play Again
-          </Button>
-        )}
-        
-        {/* 結果メッセージ */}
-        {message && (
-          <Alert
-            color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : "yellow"}
-            variant="light"
-            radius="md"
-            withCloseButton={false}
-          >
-            <Text size="lg" weight={600}>
-              {message}
-            </Text>
-          </Alert>
-        )}
+          {gameOver && (
+            <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
+              Play Again
+            </Button>
+          )}
+          
+          {message && (
+            <Alert
+              // title="Result"
+              color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : "yellow"}
+              variant="light"
+              radius="md"
+              withCloseButton={false}
+            >
+              <Text size="lg" weight={600}>
+                {message}
+              </Text>
+            </Alert>
+          )}
       </Stack>
     </Container>
   );
 }
 
-export default App;
+export default App
 ```
 
 この`App.js`の実装では，以下の重要なポイントがあります：
@@ -362,12 +369,3 @@ export default App;
 4. スコアが21を超えるとバースト（負け）となります
 5. ディーラーとプレイヤーのスコアを比較して勝敗が決まります
 6. 「Play Again」ボタンで新しいゲームを開始できます
-
-## 技術的なポイント
-
-1. **React Hooks**: `useState`と`useEffect`を使用して状態管理を行っています
-2. **コンポーネント設計**: 機能ごとにコンポーネントを分割し，再利用性を高めています
-3. **Mantine**: モダンなUIコンポーネントライブラリを使用して，見やすいインターフェースを実現しています
-4. **ダークモード対応**: `ColorSchemeToggle`コンポーネントでダークモード/ライトモードの切り替えが可能です
-
-このチュートリアルに沿って実装することで，Reactの基本的な概念を学びながら，実用的なブラックジャックゲームを作成することができます．
