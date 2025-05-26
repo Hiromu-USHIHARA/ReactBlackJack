@@ -42,8 +42,8 @@ src/
 
 ### カードとデッキの実装
 
-まず，`utils/deck.js`でカードデッキの生成ロジックを実装します．
-デッキは４種のスートと13種の数の組み合わせからなります．
+まず，`utils/deck.js`で，52枚のカードデッキを生成し，シャッフルする機能を実装します．
+デッキは４種のスートと13種の数からなります．
 
 ```javascript
 export function createDeck(){
@@ -69,8 +69,13 @@ function shuffle(deck){
 
 ### スコア計算の実装
 
-次に`utils/calculateScore.js`にブラックジャックのスコア計算ロジックを実装します．
-エースはスコアが21を超えない場合は11として，超える場合は1として加算されます．
+ブラックジャックの核心となるスコア計算ロジックを`utils/calculateScore.js`に実装します．
+この実装では以下のルールに従います:
+
+- エースの柔軟な扱い（1点または11点）
+- 絵札（J，Q，K）は10点として計算
+- バースト（21点超過）の判定
+
 
 ```javascript
 export const calculateScore = (hand) => {
@@ -103,7 +108,14 @@ export const calculateScore = (hand) => {
 ### コンポーネントの実装
 
 #### Card.js
-カードを表示するコンポーネントです．
+カードを表示するコンポーネントを実装します．
+このコンポーネントは以下の責務を持ちます:
+
+- 単一のカードの視覚的表現
+- スートと数字の表示
+- カードのスタイリング（色，サイズ，レイアウト）
+- ダークモード/ライトモードへの対応
+
 
 ```javascript
 import {Card as MantineCard, Text, Stack} from "@mantine/core"
@@ -138,7 +150,14 @@ export default function Card({suit, value, colorScheme}){
 ```
 
 #### Hand.js
-`Card.js`で実装したカードを使って，プレイヤーとディーラーの手札を表示します．
+`Card.js`で実装したカードを使って，プレイヤーとディーラーの手札を表示するコンポーネントを実装します．
+このコンポーネントは以下の責務を持ちます:
+
+- 複数のカードの表示と管理
+- 手札のスコア表示
+- カードのレイアウト制御
+- ゲーム状態の視覚的表現
+
 
 ```javascript
 import Card from "./Card"
@@ -159,8 +178,14 @@ export default function Hand({cards, title, colorScheme}){
 ```
 
 #### Controls.js
-ゲームを操作するボタンを実装します．
-プレイヤーが行う操作はヒット（カードを引く），スタンド（勝負する）の２つです．
+ゲームの操作インターフェースを提供するコンポーネントを実装します．
+このコンポーネントは以下の責務を持ちます:
+
+- ゲーム操作ボタンの提供
+- ゲーム状態に応じたUI制御
+- ユーザーアクションのトリガー
+- 無効な操作の防止
+
 
 ```javascript
 import { Button, Group } from "@mantine/core"
@@ -180,8 +205,14 @@ export default function Controls({onHit, onStand, disabled}){
 ```
 
 #### ColorSchemeToggle.js
+テーマ切り替え機能を提供するコンポーネントの実装について説明します．
+このコンポーネントは以下の責務を持ちます：
 
-この機能はオプショナルですが，ライトモード/ダークモード切り換え機能を実装しています．
+- ライトモード/ダークモードの切り替え
+- テーマ状態の管理
+- ユーザー設定の永続化
+- 視覚的フィードバックの提供
+
 
 ```javascript
 import { ActionIcon, useMantineColorScheme, Tooltip } from "@mantine/core";
@@ -211,15 +242,18 @@ export default function ColorSchemeToggle(){
 ### メインゲームロジックの実装
 
 `App.js`でメインのゲームロジックを実装します．
-主な機能は以下のとおりです．
+このコンポーネントは以下の責務を持ちます：
 
-1. ゲームの状態管理（デッキ，プレイヤーの手札，ディーラーの手札）
-2. ヒット（カードを引く）機能
-3. スタンド（カードを引くのをやめる）機能
-4. ゲームの勝敗判定
-5. ゲームのリスタート機能
+- ゲームの状態管理
+- ゲームロジックの制御
+- ユーザーインタラクションの処理
+- 勝敗判定の実行
 
-以下が`App.js`の実装です：
+実装の特徴：
+- React Hooksを活用した状態管理
+- コンポーネントの適切な分割
+- エラーハンドリング
+- パフォーマンス最適化
 
 ```javascript
 import { useState, useEffect } from "react";
@@ -323,7 +357,6 @@ function App(){
           
           {message && (
             <Alert
-              // title="Result"
               color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : "yellow"}
               variant="light"
               radius="md"
@@ -341,25 +374,6 @@ function App(){
 
 export default App
 ```
-
-この`App.js`の実装では，以下の重要なポイントがあります：
-
-1. **状態管理**：
-   - `useState`フックを使用して，デッキ，プレイヤーの手札，ディーラーの手札，メッセージ，ゲーム終了状態を管理します．
-   - `useMantineColorScheme`フックでダークモード/ライトモードの切り替えを管理します．
-
-2. **ゲーム初期化**：
-   - `useEffect`フックを使用して，コンポーネントのマウント時にゲームを初期化します．
-   - 新しいデッキを作成し，プレイヤーとディーラーに2枚ずつカードを配ります．
-
-3. **ゲームロジック**：
-   - `handleHit`：プレイヤーがカードを引く処理を実装します．
-   - `handleStand`：プレイヤーがスタンドした後のディーラーの行動と勝敗判定を実装します．
-   - `handleRestart`：ゲームをリスタートする処理を実装します．
-
-4. **UIレンダリング**：
-   - Mantineのコンポーネントを使用して，モダンでレスポンシブなUIを実現します．
-   - ゲームの状態に応じて，適切なUIコンポーネントを表示します．
 
 ## 完成したゲームの遊び方
 
