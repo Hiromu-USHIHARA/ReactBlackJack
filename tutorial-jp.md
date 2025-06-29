@@ -1,9 +1,9 @@
 # Reactでブラックジャックを作ろう！
 
-このチュートリアルでは，[React](https://ja.react.dev/)を使用して[ブラックジャック](https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B8%E3%83%A3%E3%83%83%E3%82%AF)を実装していきます．
+この記事では，[React](https://ja.react.dev/)を使用して[ブラックジャック](https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B8%E3%83%A3%E3%83%83%E3%82%AF)を実装していきます．
 UIにはモダンなライブラリである[Mantine](https://mantine.dev/)を利用します．
 
-この解説は[Zennでも公開](https://zenn.dev/hiromu_ushihara/articles/3e40ea5a34f2a7)されています．
+> 実際のコードは[Githubで公開](https://github.com/Hiromu-USHIHARA/ReactBlackJack.git)していますので，適宜ご参照ください．
 
 ## プロジェクトのセットアップ
 
@@ -47,7 +47,7 @@ src/
 まず，`utils/deck.js`で，52枚のカードデッキを生成し，シャッフルする機能を実装します．
 デッキは４種のスートと13種の数からなります．
 
-```javascript
+```javascript: src/utils/deck.js
 export function createDeck(){
     const suits=["♣", "♠", "♥", "♦"];
     const values=[
@@ -79,7 +79,7 @@ function shuffle(deck){
 - バースト（21点超過）の判定
 
 
-```javascript
+```javascript: src/utils/calculateScore.js
 export const calculateScore = (hand) => {
   let score = 0;
   let aces = 0;
@@ -119,7 +119,7 @@ export const calculateScore = (hand) => {
 - ダークモード/ライトモードへの対応
 
 
-```javascript
+```javascript: src/components/Card.js
 import {Card as MantineCard, Text, Stack} from "@mantine/core"
 
 export default function Card({suit, value, colorScheme}){
@@ -161,7 +161,7 @@ export default function Card({suit, value, colorScheme}){
 - ゲーム状態の視覚的表現
 
 
-```javascript
+```javascript: src/components/Hand.js
 import Card from "./Card"
 import { Group, Title} from "@mantine/core"
 
@@ -189,7 +189,7 @@ export default function Hand({cards, title, colorScheme}){
 - 無効な操作の防止
 
 
-```javascript
+```javascript: src/components/Controls.js
 import { Button, Group } from "@mantine/core"
 
 export default function Controls({onHit, onStand, disabled}){
@@ -216,7 +216,7 @@ export default function Controls({onHit, onStand, disabled}){
 - 視覚的フィードバックの提供
 
 
-```javascript
+```javascript: src/components/ColorSchemeToggle.js
 import { ActionIcon, useMantineColorScheme, Tooltip } from "@mantine/core";
 import { IconSun, IconMoonStars } from "@tabler/icons-react";
 
@@ -257,7 +257,7 @@ export default function ColorSchemeToggle(){
 - エラーハンドリング
 - パフォーマンス最適化
 
-```javascript
+```javascript: src/App.js
 import { useState, useEffect } from "react";
 import { createDeck } from "./utils/deck";
 import Hand from "./components/Hand.js"
@@ -398,9 +398,8 @@ npm start
 ## デプロイ済みのゲーム画面
 
 以下が完成したゲームの画面です．
+このゲームは[Vercelにデプロイ](https://react-black-jack-git-main-hiromu-ushiharas-projects.vercel.app/)されており，オンラインでプレイすることができます．
 
-![ReactBlackJackVercelSnapshot](ReactBlackJackVercelSnapshot.png)
-
-このゲームは[Vercelにデプロイ](https://react-black-jack-git-main-hiromu-ushiharas-projects.vercel.app/)されており，実際にプレイすることができます．
+![](https://storage.googleapis.com/zenn-user-upload/810c4cd45515-20250526.png)
 
 > この記事の作成にあたっては，作成したコードをもとに生成AIが活用されています．
