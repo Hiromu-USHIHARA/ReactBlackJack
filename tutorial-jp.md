@@ -272,7 +272,8 @@ function App(){
   const [dealerHand, setDealerHand]=useState([]);
   const [message, setMessage]=useState("");
   const [gameOver, setGameOver]=useState(false);
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const [dealerThinking, setDealerThinking]=useState(false);
+  const { colorScheme } = useMantineColorScheme();
 
   useEffect(()=>{
     const newDeck=createDeck();
@@ -298,18 +299,26 @@ function App(){
     }
   }
 
-  const handleStand=()=>{
+  const handleStand=async ()=>{
+    setDealerThinking(true);
+    
     let newDeck=[...deck];
     let newDealerHand=[...dealerHand];
 
+    // ディーラーのカードを引く処理を段階的に実行
     while (calculateScore(newDealerHand)<17){
+      // ディレイを追加
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       const card=newDeck.shift();
       newDealerHand.push(card);
+      
+      // 各カードを引いた後に状態を更新
+      setDealerHand([...newDealerHand]);
+      setDeck([...newDeck]);
     }
     
-    setDealerHand(newDealerHand);
-    setDeck(newDeck);
-
+    // 最終的な結果を判定
     const playerScore=calculateScore(playerHand);
     const dealerScore=calculateScore(newDealerHand);
     
@@ -323,7 +332,8 @@ function App(){
       setMessage("Draw!")
     }
 
-    setGameOver(true)
+    setDealerThinking(false);
+    setGameOver(true);
   }
 
   const handleRestart=()=>{
@@ -333,6 +343,7 @@ function App(){
     setDeck(newDeck.slice(4));
     setMessage("");
     setGameOver(false);
+    setDealerThinking(false);
   }
 
   const playerScore=calculateScore(playerHand);
@@ -347,11 +358,19 @@ function App(){
         </Group>
           <Hand cards={dealerHand} title={`Dealer (Score: ${dealerScore})`} colorScheme={colorScheme} />
           <Hand cards={playerHand} title={`Player (Score: ${playerScore})`} colorScheme={colorScheme} />
-          {!gameOver && (
-            <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver} />
+          {!gameOver && !dealerThinking && (
+            <Controls onHit={handleHit} onStand={handleStand} disabled={gameOver || dealerThinking} />
           )}
 
-          {gameOver && (
+          {dealerThinking && (
+            <Alert color="blue" variant="light" radius="md" withCloseButton={false}>
+              <Text size="lg" weight={600}>
+                Dealer's turn...
+              </Text>
+            </Alert>
+          )}
+
+          {gameOver && !dealerThinking && (
             <Button onClick={handleRestart} mt="md" color="gray" variant="outline">
               Play Again
             </Button>
@@ -359,7 +378,8 @@ function App(){
           
           {message && (
             <Alert
-              color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : "yellow"}
+              // title="Result"
+              color={message.includes("Win") ? "green" : message.includes("Lose") ? "red" : message.includes("ディーラー") ? "blue" : "yellow"}
               variant="light"
               radius="md"
               withCloseButton={false}

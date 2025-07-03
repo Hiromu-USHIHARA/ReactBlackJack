@@ -44,4 +44,6 @@ Then open `http://localhost:3000` in your browser.
 
 - Stylish UI using Mantine
 - Dark mode toggle (top-right)
+- Added delay to dealer's card drawing for more realistic gameplay experience
+
 
