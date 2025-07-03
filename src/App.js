@@ -12,7 +12,7 @@ function App(){
   const [dealerHand, setDealerHand]=useState([]);
   const [message, setMessage]=useState("");
   const [gameOver, setGameOver]=useState(false);
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   useEffect(()=>{
     const newDeck=createDeck();
