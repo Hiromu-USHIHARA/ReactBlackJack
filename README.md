@@ -16,15 +16,17 @@ ReactBlackJack/
 ├── public/
 ├── src/
 │   ├── components/
-│   │   ├── Card.js
-│   │   ├── Hand.js
-│   │   ├── Controls.js
-│   │   └── ColorSchemeToggle.js
+│   │   ├── Card.jsx
+│   │   ├── Hand.jsx
+│   │   ├── Controls.jsx
+│   │   └── ColorSchemeToggle.jsx
 │   ├── utils/
-│   │   ├── createDeck.js
+│   │   ├── deck.js
 │   │   └── calculateScore.js
-│   ├── App.js
-│   └── index.js
+│   ├── App.jsx
+│   └── index.jsx
+├── index.html
+├── vite.config.js
 └── README.md
 ```
 
@@ -35,10 +37,10 @@ git clone https://github.com/Hiromu-USHIHARA/ReactBlackJack.git
 cd ReactBlackJack
 
 npm install
-npm start
+npm run dev
 ```
 
-Then open `http://localhost:3000` in your browser.
+Then open `http://localhost:3000` in your browser. `npm start` also launches the Vite dev server.
 
 ## Features
 

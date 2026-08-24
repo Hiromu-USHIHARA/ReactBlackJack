@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { createDeck } from "./utils/deck";
-import Hand from "./components/Hand.js"
-import Controls from "./components/Controls.js";
-import ColorSchemeToggle from "./components/ColorSchemeToggle.js";
-import { calculateScore } from "./utils/calculateScore.js";
+import Hand from "./components/Hand"
+import Controls from "./components/Controls";
+import ColorSchemeToggle from "./components/ColorSchemeToggle";
+import { calculateScore } from "./utils/calculateScore";
 import { Container, Title, Stack, Button, Alert, Text, Group, useMantineColorScheme } from "@mantine/core";
 
 function App(){
